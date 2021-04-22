@@ -9,3 +9,4 @@
 name "nodejs_setup"
 
 depends "application_javascript", "~> 1.0.0"
+depends "nodejs", "~> 7.3.1"
