@@ -39,8 +39,8 @@ application app_path do
     echo $'TOKEN_SECRET=#{app["environment"]["TOKEN_SECRET"]}' >>#{app_path}/.env
     echo $'ADMIN_USERNAME=#{app["environment"]["ADMIN_USERNAME"]}' >>#{app_path}/.env
     echo $'ADMIN_PASSWORD=#{app["environment"]["ADMIN_PASSWORD"]}' >>#{app_path}/.env
-    echo $'SSL_CERTIFICATE="#{app["ssl_configuration"]["certificate"]}"' >>#{app_path}/.env
-    echo $'SSL_KEY="#{app["ssl_configuration"]["private_key"]}"' >>#{app_path}/.env
+    echo $'#{app["ssl_configuration"]["certificate"]}' >>#{app_path}/cert/cert.pem
+    echo $'#{app["ssl_configuration"]["private_key"]}' >>#{app_path}/cert/key.pem
     EOH
   end
 end
