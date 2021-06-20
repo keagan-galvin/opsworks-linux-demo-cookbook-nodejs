@@ -1,5 +1,3 @@
-include_recipe "nodejs"
-
 app = search(:aws_opsworks_app).first
 app_path = "/srv/#{app['shortname']}"
 
@@ -25,8 +23,24 @@ application app_path do
     to "#{app_path}/index.js"
   end
 
-  npm_install
-  npm_start do
-    action [:stop, :enable, :start]
+  npm_install do
+    retries 3
+    retry_delay 10
+  end
+
+  bash 'Configure .env' do
+    user 'root'
+    code <<-EOH
+    echo $'DB_HOST=#{app["environment"]["DB_HOST"]}' >#{app_path}/.env
+    echo $'DB_USERNAME=#{app["environment"]["DB_USERNAME"]}' >>#{app_path}/.env
+    echo $'DB_PASS=#{app["environment"]["DB_PASS"]}' >>#{app_path}/.env
+    echo $'DB=#{app["environment"]["DB"]}' >>#{app_path}/.env
+    echo $'PORT=80' >>#{app_path}/.env
+    echo $'TOKEN_SECRET=#{app["environment"]["TOKEN_SECRET"]}' >>#{app_path}/.env
+    echo $'ADMIN_USERNAME=#{app["environment"]["ADMIN_USERNAME"]}' >>#{app_path}/.env
+    echo $'ADMIN_PASSWORD=#{app["environment"]["ADMIN_PASSWORD"]}' >>#{app_path}/.env
+    echo $'SSL_CERTIFICATE="#{app["ssl_configuration"]["certificate"]}"' >>#{app_path}/.env
+    echo $'SSL_KEY="#{app["ssl_configuration"]["private_key"]}"' >>#{app_path}/.env
+    EOH
   end
 end
